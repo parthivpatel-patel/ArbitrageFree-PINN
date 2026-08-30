@@ -32,27 +32,27 @@ Standard market calibration routines minimize root-mean-squared error (RMSE) bet
 \chapter{Theoretical Framework and PDE Formulation}
 \section{Stochastic Volatility and Pricing Dynamics}
 Under the risk-neutral measure $\mathbb{Q}$, the underlying asset price $ follows the stochastic differential equation:
-maindS_t = r S_t dt + \sqrt{v_t} S_t dW_t^Smain
+cleardS_t = r S_t dt + \sqrt{v_t} S_t dW_t^Sclear
 where $ represents the instantaneous variance process governed by a secondary stochastic driver:
-maindv_t = \kappa(\theta - v_t)dt + \xi \sqrt{v_t} dW_t^vmain
+cleardv_t = \kappa(\theta - v_t)dt + \xi \sqrt{v_t} dW_t^vclear
 European call option prices (K, T)$ satisfy the governing pricing partial differential equations under no-arbitrage conditions.
 
 \section{Static No-Arbitrage Constraints}
 To preclude static arbitrage opportunities in option pricing surfaces, the pricing function (K, T)$ with strike $ and maturity $ must satisfy two fundamental differential inequalities:
 \begin{proposition}[Calendar Spread Arbitrage]
 The call price must be monotonically non-decreasing with respect to maturity:
-main\frac{\partial C}{\partial T} \geq 0main
+clear\frac{\partial C}{\partial T} \geq 0clear
 \end{proposition}
 
 \begin{proposition}[Butterfly Spread Arbitrage]
 The call price must be convex with respect to strike:
-main\frac{\partial^2 C}{\partial K^2} \geq 0main
+clear\frac{\partial^2 C}{\partial K^2} \geq 0clear
 \end{proposition}
 
 \chapter{Neural Architecture and Loss Optimization}
 \section{Automatic Differentiation Penalties}
 We construct a composite loss function embedding differential penalties to enforce theoretical boundaries during gradient descent optimization:
-main\mathcal{L}_{\text{total}} = \lambda_{\text{data}} \mathcal{L}_{\text{data}} + \lambda_{\text{calendar}} \mathcal{L}_{\text{calendar}} + \lambda_{\text{butterfly}} \mathcal{L}_{\text{butterfly}}main
+clear\mathcal{L}_{\text{total}} = \lambda_{\text{data}} \mathcal{L}_{\text{data}} + \lambda_{\text{calendar}} \mathcal{L}_{\text{calendar}} + \lambda_{\text{butterfly}} \mathcal{L}_{\text{butterfly}}clear
 where $\mathcal{L}_{\text{data}}$ represents the mean squared error against market mid-prices, and $\mathcal{L}_{\text{calendar}}$ and $\mathcal{L}_{\text{butterfly}}$ penalize negative derivatives computed via automatic differentiation.
 
 \chapter{Empirical Benchmarks and Ablation Studies}
