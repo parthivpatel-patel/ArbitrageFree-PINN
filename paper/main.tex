@@ -11,10 +11,23 @@
 \maketitle
 
 \begin{abstract}
-We present a novel quantitative framework combining high-performance C++ systems architecture with Physics-Informed Neural Networks (PINNs) to model equity and index options volatility surfaces. By embedding strict no-arbitrage boundary conditions---specifically calendar spread monotonicity and butterfly spread convexity---directly into the neural network's loss function, our model eliminates structural pricing anomalies while maintaining sub-millisecond evaluation latencies.
+We present a rigorous quantitative framework combining high-performance C++ systems architecture with Physics-Informed Neural Networks (PINNs) to model equity and index options volatility surfaces. By embedding strict no-arbitrage boundary conditions---specifically calendar spread monotonicity and butterfly spread convexity---directly into the neural network's loss function, our model eliminates structural pricing anomalies while maintaining sub-millisecond evaluation latencies.
 \end{abstract}
 
 \section{Introduction}
-Traditional parametric volatility models (e.g., SABR, Heston) often suffer from calibration instability and localized arbitrage violations when confronted with sparse or noisy high-frequency market data...
+Traditional parametric volatility models (e.g., SABR, Heston) often suffer from calibration instability and localized arbitrage violations when confronted with sparse or noisy high-frequency market data. In this paper, we formulate an institutional-grade deep learning architecture that enforces theoretical no-arbitrage constraints natively via automatic differentiation.
+
+\section{Mathematical Formulation and No-Arbitrage Constraints}
+Let (K, T)$ denote the price of a European call option with strike $ and maturity $. To preclude static arbitrage opportunities, the pricing surface must satisfy two foundational differential inequalities:
+
+\begin{enumerate}
+    \item \textbf{Calendar Spread Arbitrage (Monotonicity w.r.t Maturity):}
+    clear\frac{\partial C}{\partial T} \geq 0clear
+    \item \textbf{Butterfly Spread Arbitrage (Convexity w.r.t Strike):}
+    clear\frac{\partial^2 C}{\partial K^2} \geq 0clear
+\end{enumerate}
+
+Our composite PINN loss function penalizes violations of these conditions dynamically during gradient descent optimization:
+clear\mathcal{L}_{\text{total}} = \lambda_{\text{data}} \mathcal{L}_{\text{data}} + \lambda_{\text{calendar}} \mathcal{L}_{\text{calendar}} + \lambda_{\text{butterfly}} \mathcal{L}_{\text{butterfly}}clear
 
 \end{document}
