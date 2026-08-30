@@ -19,6 +19,9 @@
 \section{Background and Motivation}
 Traditional parametric volatility models, such as the SABR and Heston frameworks, form the bedrock of modern quantitative finance. However, when calibrated against high-frequency, noisy market option chains, they frequently suffer from calibration instability, slow convergence, and localized arbitrage boundary violations. In this monograph, we introduce an institutional-grade quantitative framework combining high-performance C++ systems architecture with Physics-Informed Neural Networks (PINNs).
 
+\section{Limitations of Legacy Calibration Frameworks}
+Standard market calibration routines minimize root-mean-squared error (RMSE) between model and market prices. Without structural regularization, optimization algorithms frequently cross non-arbitrage bounds. This results in negative calendar spreads or butterfly arbitrage violations where implied probability densities become negative.
+
 \section{Core Contributions of This Work}
 \begin{enumerate}
     \item \textbf{Native No-Arbitrage Enforcement:} Embedding strict calendar spread monotonicity and butterfly spread convexity directly into the neural network's loss function via automatic differentiation.
@@ -29,27 +32,27 @@ Traditional parametric volatility models, such as the SABR and Heston frameworks
 \chapter{Theoretical Framework and PDE Formulation}
 \section{Stochastic Volatility and Pricing Dynamics}
 Under the risk-neutral measure $\mathbb{Q}$, the underlying asset price $ follows the stochastic differential equation:
-cleardS_t = r S_t dt + \sqrt{v_t} S_t dW_t^Sclear
+maindS_t = r S_t dt + \sqrt{v_t} S_t dW_t^Smain
 where $ represents the instantaneous variance process governed by a secondary stochastic driver:
-cleardv_t = \kappa(\theta - v_t)dt + \xi \sqrt{v_t} dW_t^vclear
+maindv_t = \kappa(\theta - v_t)dt + \xi \sqrt{v_t} dW_t^vmain
 European call option prices (K, T)$ satisfy the governing pricing partial differential equations under no-arbitrage conditions.
 
 \section{Static No-Arbitrage Constraints}
 To preclude static arbitrage opportunities in option pricing surfaces, the pricing function (K, T)$ with strike $ and maturity $ must satisfy two fundamental differential inequalities:
 \begin{proposition}[Calendar Spread Arbitrage]
 The call price must be monotonically non-decreasing with respect to maturity:
-clear\frac{\partial C}{\partial T} \geq 0clear
+main\frac{\partial C}{\partial T} \geq 0main
 \end{proposition}
 
 \begin{proposition}[Butterfly Spread Arbitrage]
 The call price must be convex with respect to strike:
-clear\frac{\partial^2 C}{\partial K^2} \geq 0clear
+main\frac{\partial^2 C}{\partial K^2} \geq 0main
 \end{proposition}
 
 \chapter{Neural Architecture and Loss Optimization}
 \section{Automatic Differentiation Penalties}
 We construct a composite loss function embedding differential penalties to enforce theoretical boundaries during gradient descent optimization:
-clear\mathcal{L}_{\text{total}} = \lambda_{\text{data}} \mathcal{L}_{\text{data}} + \lambda_{\text{calendar}} \mathcal{L}_{\text{calendar}} + \lambda_{\text{butterfly}} \mathcal{L}_{\text{butterfly}}clear
+main\mathcal{L}_{\text{total}} = \lambda_{\text{data}} \mathcal{L}_{\text{data}} + \lambda_{\text{calendar}} \mathcal{L}_{\text{calendar}} + \lambda_{\text{butterfly}} \mathcal{L}_{\text{butterfly}}main
 where $\mathcal{L}_{\text{data}}$ represents the mean squared error against market mid-prices, and $\mathcal{L}_{\text{calendar}}$ and $\mathcal{L}_{\text{butterfly}}$ penalize negative derivatives computed via automatic differentiation.
 
 \chapter{Empirical Benchmarks and Ablation Studies}
