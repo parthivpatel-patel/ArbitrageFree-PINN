@@ -1,20 +1,29 @@
 \chapter{Theoretical Framework and PDE Formulation}
-\section{Stochastic Volatility and Risk-Neutral Pricing Dynamics}
-Under the risk-neutral measure $\mathbb{Q}$, the underlying asset price $S_t$ and instantaneous variance $v_t$ follow a coupled system of stochastic differential equations:
+\section{Measure-Theoretic Foundations and Risk-Neutral Dynamics}
+Let $(\Omega, \mathcal{F}, \{\mathcal{F}_t\}_{t \geq 0}, \mathbb{P})$ be a filtered probability space satisfying the usual conditions. Under the objective measure $\mathbb{P}$, the underlying asset price $S_t$ and its instantaneous variance $v_t$ follow a coupled system of stochastic differential equations (SDEs). By Girsanov's Theorem, there exists a Radon-Nikodym derivative $\frac{d\mathbb{Q}}{d\mathbb{P}}$ that transitions the system to a risk-neutral measure $\mathbb{Q}$, under which discounted tradable assets are martingales.
+
+The Heston dynamics under $\mathbb{Q}$ are given by:
 $$dS_t = r S_t dt + \sqrt{v_t} S_t dW_t^S$$
 $$dv_t = \kappa(\theta - v_t)dt + \xi \sqrt{v_t} dW_t^v$$
-where $r$ represents the risk-free rate, $\kappa$ the rate of mean reversion, $\theta$ the long-term variance mean, and $\xi$ the volatility of volatility. The Brownian increments satisfy $\mathbb{E}[dW_t^S dW_t^v] = \rho dt$.
+where $r$ is the risk-free rate, $\kappa$ is the mean-reversion speed, $\theta$ is the long-term variance, and $\xi$ is the volatility of volatility. The Brownian motions are correlated such that $d\langle W^S, W^v \rangle_t = \rho dt$.
 
-\section{Derivation of Governing Partial Differential Equations}
-European call option prices $C(K, T)$ satisfy the multi-dimensional Feynman-Kac PDE associated with the Heston stochastic volatility generator. To ensure non-negative option prices and complete freedom from static arbitrage, the pricing surface must satisfy fundamental differential inequalities across all strikes $K$ and maturities $T$.
+\section{The Infinitesimal Generator and Feynman-Kac Theorem}
+By applying the multi-dimensional Ito's Lemma to a sufficiently smooth pricing function $C(t, S_t, v_t)$, and taking expectations under $\mathbb{Q}$, we invoke the Feynman-Kac theorem to arrive at the governing partial differential equation (PDE) for any European contingent claim:
+$$\frac{\partial C}{\partial t} + r S \frac{\partial C}{\partial S} + \frac{1}{2} v S^2 \frac{\partial^2 C}{\partial S^2} + \kappa(\theta - v)\frac{\partial C}{\partial v} + \frac{1}{2} \xi^2 v \frac{\partial^2 C}{\partial v^2} + \rho \xi v S \frac{\partial^2 C}{\partial S \partial v} - rC = 0$$
 
-\section{Static No-Arbitrage Constraints}
+\section{Fokker-Planck (Kolmogorov Forward) Equation}
+To understand the implied probability density function (PDF) $p(S_T | S_t)$, we analyze the Fokker-Planck equation governing the forward evolution of the transition density. To avoid butterfly arbitrage, the transition density extracted from the option surface must be strictly positive:
+$$p(K, T) = \frac{\partial^2 C(K,T)}{\partial K^2} e^{r(T-t)} \geq 0$$
+
+\section{Formalizing Static No-Arbitrage Constraints}
+For an implied volatility surface to be free of static arbitrage, it must satisfy the conditions laid out by Carr and Madan (2005) and Gatheral (2006).
+
 \begin{proposition}[Calendar Spread Monotonicity]
-The call price must be monotonically non-decreasing with respect to maturity to prevent calendar arbitrage:
+Assuming zero dividends and positive interest rates, the European call price must be monotonically non-decreasing with respect to maturity to preclude riskless calendar spread arbitrage:
 $$\frac{\partial C}{\partial T} \geq 0$$
 \end{proposition}
 
 \begin{proposition}[Butterfly Spread Convexity]
-The call price must be convex with respect to strike to ensure non-negative local risk-neutral probability density functions:
+The call price must be strictly convex with respect to the strike price. A violation implies a negative state-price density, which allows an arbitrageur to construct a riskless butterfly spread that generates an immediate credit while possessing a non-negative terminal payoff:
 $$\frac{\partial^2 C}{\partial K^2} \geq 0$$
 \end{proposition}
