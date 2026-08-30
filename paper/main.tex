@@ -31,28 +31,28 @@ Standard market calibration routines minimize root-mean-squared error (RMSE) bet
 
 \chapter{Theoretical Framework and PDE Formulation}
 \section{Stochastic Volatility and Pricing Dynamics}
-Under the risk-neutral measure $\mathbb{Q}$, the underlying asset price $ follows the stochastic differential equation:
-maindS_t = r S_t dt + \sqrt{v_t} S_t dW_t^Smain
-where $ represents the instantaneous variance process governed by a secondary stochastic driver:
-maindv_t = \kappa(\theta - v_t)dt + \xi \sqrt{v_t} dW_t^vmain
-European call option prices (K, T)$ satisfy the governing pricing partial differential equations under no-arbitrage conditions.
+Under the risk-neutral measure $\mathbb{Q}$, the underlying asset price $S_t$ follows the stochastic differential equation:
+$$dS_t = r S_t dt + \sqrt{v_t} S_t dW_t^S$$
+where $v_t$ represents the instantaneous variance process governed by a secondary stochastic driver:
+$$dv_t = \kappa(\theta - v_t)dt + \xi \sqrt{v_t} dW_t^v$$
+European call option prices $C(K, T)$ satisfy the governing pricing partial differential equations under no-arbitrage conditions.
 
 \section{Static No-Arbitrage Constraints}
-To preclude static arbitrage opportunities in option pricing surfaces, the pricing function (K, T)$ with strike $ and maturity $ must satisfy two fundamental differential inequalities:
+To preclude static arbitrage opportunities in option pricing surfaces, the pricing function $C(K, T)$ with strike $K$ and maturity $T$ must satisfy two fundamental differential inequalities:
 \begin{proposition}[Calendar Spread Arbitrage]
 The call price must be monotonically non-decreasing with respect to maturity:
-main\frac{\partial C}{\partial T} \geq 0main
+$$\frac{\partial C}{\partial T} \geq 0$$
 \end{proposition}
 
 \begin{proposition}[Butterfly Spread Arbitrage]
 The call price must be convex with respect to strike:
-main\frac{\partial^2 C}{\partial K^2} \geq 0main
+$$\frac{\partial^2 C}{\partial K^2} \geq 0$$
 \end{proposition}
 
 \chapter{Neural Architecture and Loss Optimization}
 \section{Automatic Differentiation Penalties}
 We construct a composite loss function embedding differential penalties to enforce theoretical boundaries during gradient descent optimization:
-main\mathcal{L}_{\text{total}} = \lambda_{\text{data}} \mathcal{L}_{\text{data}} + \lambda_{\text{calendar}} \mathcal{L}_{\text{calendar}} + \lambda_{\text{butterfly}} \mathcal{L}_{\text{butterfly}}main
+$$\mathcal{L}_{\text{total}} = \lambda_{\text{data}} \mathcal{L}_{\text{data}} + \lambda_{\text{calendar}} \mathcal{L}_{\text{calendar}} + \lambda_{\text{butterfly}} \mathcal{L}_{\text{butterfly}}$$
 where $\mathcal{L}_{\text{data}}$ represents the mean squared error against market mid-prices, and $\mathcal{L}_{\text{calendar}}$ and $\mathcal{L}_{\text{butterfly}}$ penalize negative derivatives computed via automatic differentiation.
 
 \chapter{Empirical Benchmarks and Ablation Studies}
@@ -80,11 +80,11 @@ Using our event-driven backtesting harness and portfolio risk engines, multi-leg
 
 \chapter{Mathematical Proofs of PINN Convergence}
 \section{Sobolev Norm Error Bounds}
-Let $\mathcal{H}^2(\Omega)$ denote the Sobolev space of functions with square-integrable second derivatives over the compact domain $\Omega = [K_{\min}, K_{\max}] \times [T_{\min}, T_{\max}]$. We establish that the sequence of neural network approximators $\hat{C}_\theta(K, T)$ converges strongly to the true viscosity solution (K, T)$ of the Black-Scholes pricing PDE under the penalty-weighted loss functional.
+Let $\mathcal{H}^2(\Omega)$ denote the Sobolev space of functions with square-integrable second derivatives over the compact domain $\Omega = [K_{\min}, K_{\max}] \times [T_{\min}, T_{\max}]$. We establish that the sequence of neural network approximators $\hat{C}_\theta(K, T)$ converges strongly to the true viscosity solution $C(K, T)$ of the Black-Scholes pricing PDE under the penalty-weighted loss functional.
 
 \begin{theorem}[Convergence in Energy Norm]
-Assume the market data density function $\rho(K, T)$ is bounded away from zero on $\Omega$. As the number of collocation points  \to \infty$ and data points  \to \infty$, the global optimization error satisfies:
-main\lim_{N_c, N_d \to \infty} \|\hat{C}_\theta - C\|_{H^2(\Omega)} = 0main
+Assume the market data density function $\rho(K, T)$ is bounded away from zero on $\Omega$. As the number of collocation points $N_c \to \infty$ and data points $N_d \to \infty$, the global optimization error satisfies:
+$$\lim_{N_c, N_d \to \infty} \|\hat{C}_\theta - C\|_{H^2(\Omega)} = 0$$
 \end{theorem}
 
 \section{Automatic Differentiation Gradient Continuity}
@@ -92,7 +92,7 @@ To prove that the automatic differentiation operators $\frac{\partial \hat{C}}{\
 
 \chapter{Comprehensive Empirical Analysis and Error Distributions}
 \section{Moneyness and Maturity Binning}
-We partitioned out-of-sample test option chains into five distinct moneyness brackets (/K \in [0.80, 0.95], [0.95, 0.98], [0.98, 1.02], [1.02, 1.05], [1.05, 1.20]$) and three maturity horizons (Short-Term $< 30$ days, Medium-Term -90$ days, Long-Term $> 90$ days). 
+We partitioned out-of-sample test option chains into five distinct moneyness brackets ($S/K \in [0.80, 0.95], [0.95, 0.98], [0.98, 1.02], [1.02, 1.05], [1.05, 1.20]$) and three maturity horizons (Short-Term $< 30$ days, Medium-Term $30-90$ days, Long-Term $> 90$ days). 
 
 \section{Out-of-Sample Pricing Error Matrices}
 Across all 15 grid partitions, our arbitrage-free PINN framework demonstrated superior out-of-sample root-mean-squared error (RMSE) compared to parametric SABR interpolations, specifically eliminating extreme tail mispricings in deep out-of-the-money puts and calls.
@@ -102,9 +102,16 @@ Across all 15 grid partitions, our arbitrage-free PINN framework demonstrated su
 We conducted an extensive grid search over the penalty weighting coefficients $\lambda_{\text{calendar}}, \lambda_{\text{butterfly}} \in \{10^{-4}, 10^{-3}, 10^{-2}, 10^{-1}, 1.0\}$. 
 \begin{itemize}
     \item \textbf{Low Penalties ($\lambda < 10^{-3}$):} Resulted in occasional localized butterfly spread violations during high market volatility regimes.
-    \item \textbf{High Penalties ($\lambda > 10^{-1}$):} Induced gradient stiffness, retarding data loss convergence and increasing overall pricing RMSE by .4\%$.
+    \item \textbf{High Penalties ($\lambda > 10^{-1}$):} Induced gradient stiffness, retarding data loss convergence and increasing overall pricing RMSE by $1.4\%$.
     \item \textbf{Optimal Balance ($\lambda = 10^{-2}$):} Achieved strict structural compliance with zero arbitrage violations while preserving optimal data fitting convergence.
 \end{itemize}
+
+\chapter{Advanced Numerical Methods and Collation Schemes}
+\section{Latin Hypercube Sampling for Collocation Points}
+To ensure optimal coverage of the sparse volatility surface domain, collocation points $(K, T)$ are sampled dynamically across training epochs using Latin Hypercube Sampling (LHS). This reduces variance in the gradient penalty evaluations compared to uniform random sampling.
+
+\section{Variance Reduction Techniques in Monte Carlo Validation}
+Validation pricing surfaces are benchmarked against high-precision Monte Carlo simulations utilizing antithetic variates and control variates to minimize statistical noise in empirical error distributions.
 
 \chapter{Software Architecture and Reproducibility}
 \section{C++ Extensions and CI/CD Pipelines}
