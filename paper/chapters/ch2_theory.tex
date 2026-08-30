@@ -1,0 +1,20 @@
+\chapter{Theoretical Framework and PDE Formulation}
+\section{Stochastic Volatility and Risk-Neutral Pricing Dynamics}
+Under the risk-neutral measure $\mathbb{Q}$, the underlying asset price $S_t$ and instantaneous variance $v_t$ follow a coupled system of stochastic differential equations:
+$$dS_t = r S_t dt + \sqrt{v_t} S_t dW_t^S$$
+$$dv_t = \kappa(\theta - v_t)dt + \xi \sqrt{v_t} dW_t^v$$
+where $r$ represents the risk-free rate, $\kappa$ the rate of mean reversion, $\theta$ the long-term variance mean, and $\xi$ the volatility of volatility. The Brownian increments satisfy $\mathbb{E}[dW_t^S dW_t^v] = \rho dt$.
+
+\section{Derivation of Governing Partial Differential Equations}
+European call option prices $C(K, T)$ satisfy the multi-dimensional Feynman-Kac PDE associated with the Heston stochastic volatility generator. To ensure non-negative option prices and complete freedom from static arbitrage, the pricing surface must satisfy fundamental differential inequalities across all strikes $K$ and maturities $T$.
+
+\section{Static No-Arbitrage Constraints}
+\begin{proposition}[Calendar Spread Monotonicity]
+The call price must be monotonically non-decreasing with respect to maturity to prevent calendar arbitrage:
+$$\frac{\partial C}{\partial T} \geq 0$$
+\end{proposition}
+
+\begin{proposition}[Butterfly Spread Convexity]
+The call price must be convex with respect to strike to ensure non-negative local risk-neutral probability density functions:
+$$\frac{\partial^2 C}{\partial K^2} \geq 0$$
+\end{proposition}

@@ -1,0 +1,9 @@
+\chapter{Introduction and Exhaustive Literature Review}
+\section{Background and Motivation}
+Traditional parametric volatility models, such as the SABR and Heston frameworks, form the bedrock of modern quantitative finance. However, when calibrated against high-frequency, noisy market option chains, they frequently suffer from calibration instability, slow convergence, and localized arbitrage boundary violations. In this monograph, we introduce an institutional-grade quantitative framework combining high-performance C++ systems architecture with Physics-Informed Neural Networks (PINNs).
+
+\section{Historical Evolution of Volatility Surface Modeling}
+The pricing of derivative securities under the Black-Scholes-Merton paradigm assumes constant volatility. The empirical observation of the volatility smile post-1987 necessitated the development of local volatility models (Dupire, 1994) and stochastic volatility models (Heston, 1993; Hagan et al., 2002). While these analytical models capture skew dynamics, their calibration against live market feeds remains an ill-posed inverse problem prone to overfitting and static arbitrage breaches.
+
+\section{Limitations of Legacy Calibration Frameworks}
+Standard market calibration routines minimize root-mean-squared error (RMSE) between model and market prices. Without structural regularization, optimization algorithms frequently cross non-arbitrage bounds. This results in negative calendar spreads or butterfly arbitrage violations where implied probability densities become negative.
