@@ -1,0 +1,15 @@
+\chapter{Neural Architecture and Loss Optimization}
+\section{Deep Neural Network Parameterization}
+We approximate the unknown option pricing surface $C(K, T)$ using a deep feedforward neural network $\hat{C}_\theta(K, T)$ parameterized by weights and biases $\theta = \{W^{(l)}, b^{(l)}\}_{l=1}^{L}$. To capture the high curvature near the at-the-money strike and short maturities, we utilize Swish (SiLU) activation functions defined as $\sigma(x) = x \cdot \text{sigmoid}(x)$, ensuring continuous second-order derivatives required for automatic differentiation of butterfly arbitrage penalties.
+
+\section{Composite Loss Function Formulation}
+The training objective combines data-driven empirical loss with physics-informed regularization terms:
+$$\mathcal{L}_{\text{total}}(\theta) = \lambda_{\text{data}} \mathcal{L}_{\text{data}}(\theta) + \lambda_{\text{calendar}} \mathcal{L}_{\text{calendar}}(\theta) + \lambda_{\text{butterfly}} \mathcal{L}_{\text{butterfly}}(\theta)$$
+
+where the data component evaluates mean-squared error against market mid-prices:
+$$\mathcal{L}_{\text{data}}(\theta) = \frac{1}{N_d} \sum_{i=1}^{N_d} \left( \hat{C}_\theta(K_i, T_i) - C^{\text{market}}(K_i, T_i) \right)^2$$
+
+\section{Automatic Differentiation of No-Arbitrage Constraints}
+Using computational graph autodiff engines in PyTorch, penalty terms are computed dynamically across collocation points $(K_j, T_j)$ sampled via Latin Hypercube Sampling:
+$$\mathcal{L}_{\text{calendar}}(\theta) = \frac{1}{N_c} \sum_{j=1}^{N_c} \left( \min\left(0, \frac{\partial \hat{C}_\theta}{\partial T}\Big|_{(K_j, T_j)}\right) \right)^2$$
+$$\mathcal{L}_{\text{butterfly}}(\theta) = \frac{1}{N_c} \sum_{j=1}^{N_c} \left( \min\left(0, \frac{\partial^2 \hat{C}_\theta}{\partial K^2}\Big|_{(K_j, T_j)}\right) \right)^2$$

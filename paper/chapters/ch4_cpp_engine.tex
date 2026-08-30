@@ -1,0 +1,26 @@
+\chapter{High-Performance C++ Systems Architecture}
+\section{C++ Pybind11 Core Math Extensions}
+To eliminate Python interpreter bottlenecks during high-frequency volatility surface processing, core analytical pricing models, implied volatility solvers (NR/Halley methods), and Greeks calculators are implemented in native C++17 and exposed to PyTorch via \texttt{pybind11}.
+
+\section{Memory Layout and Cache Optimization}
+Option chain arrays are stored using contiguous standard library vectors aligned to 64-byte cache lines, ensuring vectorization via AVX-512 instruction sets during batch pricing evaluations.
+
+\begin{verbatim}
+// Core C++ Pricing Kernel snippet
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <cmath>
+
+namespace py = pybind11;
+
+double black_scholes_call(double S, double K, double T, double r, double sigma) {
+    double d1 = (std::log(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * std::sqrt(T));
+    double d2 = d1 - sigma * std::sqrt(T);
+    auto norm_cdf = [](double x) { return 0.5 * std::erfc(-x * M_SQRT1_2); };
+    return S * norm_cdf(d1) - K * std::exp(-r * T) * norm_cdf(d2);
+}
+
+PYBIND11_MODULE(quant_math, m) {
+    m.def("bs_call", &black_scholes_call, "Compute Black-Scholes call price");
+}
+\end{verbatim}
