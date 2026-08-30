@@ -9,13 +9,13 @@ class OptionsBacktester:
     """
     def __init__(self, initial_capital=100000.0):
         self.initial_capital = initial_capital
-        logging.info(f"Initializing Options Backtester with capital: ")
+        logging.info("Initializing Options Backtester with capital: $" + format(initial_capital, ",.2f"))
 
     def run_backtest(self, pnl_stream):
         total_pnl = sum(pnl_stream)
         final_val = self.initial_capital + total_pnl
         return_pct = (total_pnl / self.initial_capital) * 100.0
-        logging.info(f"Backtest Complete | Final Capital:  | Return: {return_pct:.2f}%")
+        logging.info("Backtest Complete | Final Capital: $" + format(final_val, ",.2f") + " | Return: " + f"{return_pct:.2f}%")
         return final_val, return_pct
 
 if __name__ == "__main__":
