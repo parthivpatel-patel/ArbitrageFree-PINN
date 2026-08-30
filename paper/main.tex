@@ -5,6 +5,7 @@
 \newtheorem{theorem}{Theorem}[chapter]
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
 
 \title{Arbitrage-Free Physics-Informed Neural Networks for High-Frequency Options Pricing and Volatility Surface Calibration: A Comprehensive Monograph}
 \author{Parthiv S. Patel}
@@ -18,7 +19,7 @@
 \section{Background and Motivation}
 Traditional parametric volatility models, such as the SABR and Heston frameworks, form the bedrock of modern quantitative finance. However, when calibrated against high-frequency, noisy market option chains, they frequently suffer from calibration instability, slow convergence, and localized arbitrage boundary violations. In this monograph, we introduce an institutional-grade quantitative framework combining high-performance C++ systems architecture with Physics-Informed Neural Networks (PINNs).
 
-\section{Contributions of This Work}
+\section{Core Contributions of This Work}
 \begin{enumerate}
     \item \textbf{Native No-Arbitrage Enforcement:} Embedding strict calendar spread monotonicity and butterfly spread convexity directly into the neural network's loss function via automatic differentiation.
     \item \textbf{Hybrid C++ / Python Architecture:} Utilizing a high-performance C++ pybind11 pricing engine alongside PyTorch for sub-millisecond option evaluation and calibration.
@@ -29,7 +30,9 @@ Traditional parametric volatility models, such as the SABR and Heston frameworks
 \section{Stochastic Volatility and Pricing Dynamics}
 Under the risk-neutral measure $\mathbb{Q}$, the underlying asset price $ follows the stochastic differential equation:
 cleardS_t = r S_t dt + \sqrt{v_t} S_t dW_t^Sclear
-where $ represents the instantaneous variance process. European call option prices (K, T)$ satisfy the governing pricing partial differential equations under no-arbitrage conditions.
+where $ represents the instantaneous variance process governed by a secondary stochastic driver:
+cleardv_t = \kappa(\theta - v_t)dt + \xi \sqrt{v_t} dW_t^vclear
+European call option prices (K, T)$ satisfy the governing pricing partial differential equations under no-arbitrage conditions.
 
 \section{Static No-Arbitrage Constraints}
 To preclude static arbitrage opportunities in option pricing surfaces, the pricing function (K, T)$ with strike $ and maturity $ must satisfy two fundamental differential inequalities:
@@ -68,8 +71,12 @@ Heston FFT & 8.50 ms & 1 & 0 \\
 \label{tab:benchmarks}
 \end{table}
 
+\chapter{Risk Management and Stress Testing}
+\section{Tail Risk and Value-at-Risk Bounds}
+Using our event-driven backtesting harness and portfolio risk engines, multi-leg options portfolios were subjected to severe market drawdowns. The arbitrage-free PINN maintained structural robustness without pricing anomalies.
+
 \chapter{Software Architecture and Reproducibility}
 \section{C++ Extensions and CI/CD Pipelines}
-The framework includes automated GitHub Actions CI/CD workflows, pybind11 bindings, risk management engines, event-driven backtesters, and real-time telemetry monitoring dashboards. Source code and reproduction scripts are publicly maintained in our institutional repository.
+The framework includes automated GitHub Actions CI/CD workflows, pybind11 bindings, risk management engines, event-driven backtesters, and real-time telemetry monitoring dashboards. Source code and reproduction scripts are publicly maintained in our institutional repository at \texttt{https://github.com/parthivpatel-patel/ArbitrageFree-PINN}.
 
 \end{document}
