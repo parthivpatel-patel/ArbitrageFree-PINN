@@ -1,33 +1,26 @@
 import torch
 import pytest
-from src_python.pinn_model import ArbitrageFreeVolSurfacePINN, compute_pinn_loss
+from src_python.pinn_model import OptionPricingPINN
+from src_python.cuda_pinn_loss import ArbitrageFreePINNLoss
 
-def test_model_output_shape():
-    model = ArbitrageFreeVolSurfacePINN(nlp_embedding_dim=768, hidden_dim=256)
-    model.eval()
+def test_pinn_forward_pass():
+    model = OptionPricingPINN()
+    strikes = torch.tensor([[100.0], [105.0]], requires_grad=True)
+    maturities = torch.tensor([[0.5], [1.0]], requires_grad=True)
     
-    batch_size = 10
-    x_nlp = torch.zeros((batch_size, 768))
-    k = torch.linspace(-0.1, 0.1, batch_size).unsqueeze(1)
-    tau = torch.full((batch_size, 1), 30.0 / 365.0)
-    
-    with torch.no_grad():
-        w = model(x_nlp, k, tau)
-        
-    assert w.shape == (batch_size, 1), "Output tensor shape mismatch."
-    assert torch.all(w >= 0), "Total variance surface violates non-negativity bounds."
+    prices = model(strikes, maturities)
+    assert prices.shape == (2, 1), "Forward pass output shape mismatch."
 
-def test_pinn_loss_computation():
-    model = ArbitrageFreeVolSurfacePINN(nlp_embedding_dim=768, hidden_dim=256)
-    batch_size = 20
-    x_nlp = torch.zeros((batch_size, 768), requires_grad=True)
-    k = torch.linspace(-0.2, 0.2, batch_size).unsqueeze(1)
-    tau = torch.full((batch_size, 1), 30.0 / 365.0)
-    w_true = torch.full((batch_size, 1), 0.04)
+def test_arbitrage_free_loss():
+    model = OptionPricingPINN()
+    criterion = ArbitrageFreePINNLoss()
     
-    total_loss, mse, cal_pen, but_pen = compute_pinn_loss(
-        model, x_nlp, k, tau, w_true, lambda_cal=10.0, lambda_but=10.0
-    )
+    strikes = torch.tensor([[100.0], [105.0]], dtype=torch.float32, requires_grad=True)
+    maturities = torch.tensor([[0.5], [1.0]], dtype=torch.float32, requires_grad=True)
+    preds = model(strikes, maturities)
+    true_prices = torch.tensor([[5.0], [3.0]], dtype=torch.float32)
     
-    assert not torch.isnan(total_loss), "Loss computed as NaN."
-    assert total_loss.item() >= 0.0, "Loss cannot be negative."
+    loss, loss_dict = criterion(model, preds, true_prices, strikes, maturities, spot=100.0)
+    assert loss.item() > 0.0, "Loss calculation returned non-positive value."
+    assert "calendar_penalty" in loss_dict
+    assert "butterfly_penalty" in loss_dict
