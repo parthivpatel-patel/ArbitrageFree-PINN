@@ -17,7 +17,7 @@ Traditional parametric volatility models, such as the SABR and Heston frameworks
 \chapter{Theoretical Framework and PDE Formulation}
 \section{Black-Scholes-Merton Pricing Dynamics}
 Under the risk-neutral measure $\mathbb{Q}$, the underlying asset price $ follows the stochastic differential equation:
-cleardS_t = r S_t dt + \sqrt{v_t} S_t dW_tclear
+maindS_t = r S_t dt + \sqrt{v_t} S_t dW_tmain
 European call option prices (K, T)$ satisfy the governing pricing partial differential equations.
 
 \section{No-Arbitrage Boundary Conditions}
@@ -30,7 +30,7 @@ To preclude static arbitrage opportunities, the pricing surface must strictly sa
 \chapter{Neural Architecture and Loss Optimization}
 \section{Automatic Differentiation Penalties}
 We construct a composite loss function embedding differential penalties:
-clear\mathcal{L}_{\text{total}} = \lambda_{\text{data}} \mathcal{L}_{\text{data}} + \lambda_{\text{calendar}} \mathcal{L}_{\text{calendar}} + \lambda_{\text{butterfly}} \mathcal{L}_{\text{butterfly}}clear
+main\mathcal{L}_{\text{total}} = \lambda_{\text{data}} \mathcal{L}_{\text{data}} + \lambda_{\text{calendar}} \mathcal{L}_{\text{calendar}} + \lambda_{\text{butterfly}} \mathcal{L}_{\text{butterfly}}main
 
 \chapter{Empirical Benchmarks and Ablation Studies}
 \section{Performance and Latency Analysis}
