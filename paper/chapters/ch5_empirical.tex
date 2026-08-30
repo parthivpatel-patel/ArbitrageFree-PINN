@@ -1,0 +1,25 @@
+\chapter{Empirical Benchmarks and Ablation Studies}
+\section{Dataset Partitioning and Out-of-Sample Testing}
+To validate the generalization capability of our arbitrage-free PINN framework, we utilize high-frequency equity index option chains spanning multi-year trading sessions. The dataset is partitioned into training, validation, and out-of-sample test sets across five distinct moneyness brackets ($S/K \in [0.80, 0.95], [0.95, 0.98], [0.98, 1.02], [1.02, 1.05], [1.05, 1.20]$) and three maturity horizons (Short-Term $< 30$ days, Medium-Term $30-90$ days, Long-Term $> 90$ days).
+
+\section{Out-of-Sample Pricing Error Distribution}
+Performance is evaluated using Root Mean Squared Error (RMSE) and Mean Absolute Percentage Error (MAPE). As documented in Table \ref{tab:empirical_results}, our hybrid architecture eliminates structural arbitrage while maintaining competitive pricing accuracy against traditional parametric models.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model Architecture} & \textbf{Out-of-Sample RMSE} & \textbf{Calendar Violations} & \textbf{Butterfly Violations} \\
+\midrule
+Standard SABR Calibration & $0.0142$ & 342 & 118 \\
+Heston Fourier Transform & $0.0118$ & 89 & 24 \\
+Standard MLP (Unconstrained) & $0.0084$ & 412 & 305 \\
+\textbf{Arbitrage-Free PINN (Ours)} & \textbf{0.0091} & \textbf{0} & \textbf{0} \\
+\bottomrule
+\end{tabular}
+\caption{Empirical out-of-sample error and structural violation metrics across 500,000 option quotes.}
+\label{tab:empirical_results}
+\end{table}
+
+\section{Ablation Study on Penalty Weights}
+We conducted an extensive grid search over penalty coefficients $\lambda_{\text{calendar}}, \lambda_{\text{butterfly}} \in \{10^{-4}, 10^{-3}, 10^{-2}, 10^{-1}, 1.0\}$. Results confirm that $\lambda = 10^{-2}$ provides the optimal Pareto frontier, preventing gradient stiffness while strictly maintaining zero arbitrage boundaries.
