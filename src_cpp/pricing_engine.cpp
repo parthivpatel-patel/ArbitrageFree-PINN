@@ -1,7 +1,12 @@
+#define _USE_MATH_DEFINES
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <cmath>
 #include <vector>
+
+#ifndef M_SQRT1_2
+#define M_SQRT1_2 0.70710678118654752440
+#endif
 
 namespace py = pybind11;
 
