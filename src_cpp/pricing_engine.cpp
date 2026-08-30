@@ -1,37 +1,28 @@
-#define _USE_MATH_DEFINES
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <cmath>
+#include <vector>
 
 namespace py = pybind11;
 
-double norm_cdf(double value) { return 0.5 * std::erfc(-value * M_SQRT1_2); }
-double norm_pdf(double value) { return (1.0 / std::sqrt(2.0 * M_PI)) * std::exp(-0.5 * value * value); }
-
-double bs_put(double S, double K, double T, double r, double sigma) {
-    double d1 = (std::log(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * std::sqrt(T));
-    double d2 = d1 - sigma * std::sqrt(T);
-    return K * std::exp(-r * T) * norm_cdf(-d2) - S * norm_cdf(-d1);
-}
-
-double bs_vega(double S, double K, double T, double r, double sigma) {
-    double d1 = (std::log(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * std::sqrt(T));
-    return S * norm_pdf(d1) * std::sqrt(T);
-}
-
-double calculate_implied_volatility(double target_price, double S, double K, double T, double r) {
-    double sigma = 0.5;
-    for (int i = 0; i < 100; ++i) {
-        double price = bs_put(S, K, T, r, sigma);
-        double diff = price - target_price;
-        if (std::abs(diff) < 1e-5) return sigma;
-        double vega = bs_vega(S, K, T, r, sigma);
-        if (std::abs(vega) < 1e-8) return -1.0; 
-        sigma = sigma - (diff / vega);
+class AnalyticalPricingEngine {
+public:
+    double black_scholes_call(double S, double K, double T, double r, double sigma) {
+        if (T <= 0.0) return std::max(0.0, S - K);
+        double d1 = (std::log(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * std::sqrt(T));
+        double d2 = d1 - sigma * std::sqrt(T);
+        return S * norm_cdf(d1) - K * std::exp(-r * T) * norm_cdf(d2);
     }
-    return -1.0;
-}
+
+private:
+    double norm_cdf(double value) {
+        return 0.5 * std::erfc(-value * M_SQRT1_2);
+    }
+};
 
 PYBIND11_MODULE(quant_math, m) {
-    m.doc() = "C++ High-Frequency Options Math Module";
-    m.def("get_implied_volatility", &calculate_implied_volatility, "Calculates IV");
+    m.doc() = "High-performance C++ pricing and quantitative finance module";
+    py::class_<AnalyticalPricingEngine>(m, "AnalyticalPricingEngine")
+        .def(py::init<>())
+        .def("black_scholes_call", &AnalyticalPricingEngine::black_scholes_call);
 }
